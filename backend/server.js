@@ -40,8 +40,8 @@ const logger = winston.createLogger({
   ),
   defaultMeta: { service: 'rakshak-backend' },
   transports: [
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new winston.transports.File({ filename: path.join(__dirname, 'logs', 'error.log'), level: 'error' }),
+    new winston.transports.File({ filename: path.join(__dirname, 'logs', 'combined.log') }),
     new winston.transports.Console({
       format: winston.format.simple()
     })
@@ -213,7 +213,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Health check endpoint
+// Health check endpoint (must be before static file serving)
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -225,6 +225,17 @@ app.get('/api/health', (req, res) => {
     version: '1.0.0'
   });
 });
+
+// Serve static files from React build in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the React build
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  // Handle React routing, return all requests to React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
 
 // Root endpoint
 app.get('/', (req, res) => {
