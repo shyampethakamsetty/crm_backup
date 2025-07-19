@@ -2,26 +2,26 @@
 
 services:
   # MongoDB Database
-  mongodb:
-    image: mongo:7.0
-    container_name: rakshak-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: rakshak-expense
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    networks:
-      - rakshak-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  # mongodb:
+  #   image: mongo:7.0
+  #   container_name: rakshak-mongodb
+  #   restart: unless-stopped
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin
+  #     MONGO_INITDB_ROOT_PASSWORD: password123
+  #     MONGO_INITDB_DATABASE: rakshak-expense
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #     - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  #   networks:
+  #     - rakshak-network
+  #   healthcheck:
+  #     test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
   # Main Application
   app:
@@ -33,16 +33,16 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5001
-      - MONGODB_URI=mongodb://admin:password123@mongodb:27017/rakshak-expense?authSource=admin
+      - MONGODB_URI=mongodb+srv://subvivah:matrimony%40123@cluster0.2wmxzb7.mongodb.net/rakshak-expense?retryWrites=true&w=majority&appName=Cluster0
       - JWT_SECRET=your-super-secret-jwt-key-change-in-production
       - JWT_EXPIRE=1d
       - BCRYPT_ROUNDS=12
       - FRONTEND_URL=http://localhost:3000
     ports:
       - "5001:5001"
-    depends_on:
-      mongodb:
-        condition: service_healthy
+    # depends_on:
+    #   mongodb:
+    #     condition: service_healthy
     volumes:
       - app_logs:/app/backend/logs
       - uploads:/app/backend/uploads

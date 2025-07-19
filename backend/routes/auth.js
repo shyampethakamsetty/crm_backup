@@ -136,6 +136,7 @@ router.post('/login', [
     console.log('LOGIN ATTEMPT:');
     console.log('User email:', user.email);
     console.log('User hashed password:', user.password);
+    console.log('Entered password:', password);
   }
 
   if (!user) {
@@ -163,6 +164,7 @@ router.post('/login', [
 
   // Check password
   const isMatch = await user.matchPassword(password);
+  console.log('Password match result:', isMatch);
 
   if (!isMatch) {
     // Increment login attempts
